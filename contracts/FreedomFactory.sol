@@ -5,18 +5,17 @@ import "./FreedomWallet.sol";
 
 contract FreedomFactory {
 
-  // Returns the address of the newly deployed contract
+  // Deploys a FreedomWallet contract returning its address matching that returned by getAddress()
   function deploy(address owner_, uint256 salt_)
     public
     payable
     returns (address)
   {
-    // This syntax is a newer way to invoke create2 without assembly, you just need to pass salt
     // https://docs.soliditylang.org/en/latest/control-structures.html#salted-contract-creations-create2
     return address(new FreedomWallet{salt: bytes32(salt_)}(owner_));
   }
 
-  // 1. Get bytecode of contract to be deployed
+  // Returns the creation bytecode of the FreedomWallet contract.
   function getBytecode(address owner_)
       public
       pure
@@ -26,10 +25,7 @@ contract FreedomFactory {
       return abi.encodePacked(bytecode, abi.encode(owner_));
   }
 
-  /** 2. Compute the address of the contract to be deployed
-      params:
-          _salt: random unsigned number to identify instance
-  */ 
+  // Returns the deterministic address for a FreedomWallet with the given owner and salt.
   function getAddress(address owner_, uint256 salt_)
       public
       view
