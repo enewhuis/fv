@@ -1,7 +1,7 @@
 from brownie import web3, reverts
+from conftest import sign, sign2
 
-
-def test_transfer_before_deploy(accounts, factory, token, FreedomWallet):
+def test_transfer_before_deploy(accounts, factory, token, FreedomWallet, chain):
     sender = accounts[0]
     owner = accounts.add()
     receiver = accounts[1]
@@ -17,7 +17,8 @@ def test_transfer_before_deploy(accounts, factory, token, FreedomWallet):
     token.transfer(walletAddress, 100e18, {'from': sender})
 
     # Deploy the FreedomWallet for the owner; the address should match.
-    tx_deploy = factory.deploy(owner, 0)
+    instance = 0
+    tx_deploy = factory.deploy(owner, instance)
     wallet = FreedomWallet.at(tx_deploy.return_value)
     assert wallet.address == walletAddress
 
@@ -31,6 +32,8 @@ def test_transfer_before_deploy(accounts, factory, token, FreedomWallet):
 
     # FreedomWallet owner signs the transaction for the operator to execute.
     signed = sign(wallet, owner, tx)
+    signed2 = sign2(factory, owner, instance, chain.id, tx)
+    assert signed == signed2
 
     # Operator broadcast signed transaction paying for gas on behalf of owner
     wallet.execute(
@@ -111,21 +114,3 @@ def test_signer_matters(accounts, factory, token, FreedomWallet):
             tx['executor'],
             tx['gasLimit'],
             {'from': operator, 'gasLimit': tx['gasLimit']})
-
-  
-def sign(wallet, signer, tx):
-    txInput = web3.eth.codec.encode_abi(
-        ['bytes32', 'address', 'uint256', 'bytes32', 'uint256', 'address', 'uint256'],
-        [
-            wallet.TXTYPE_HASH(),
-            tx['destination'],
-            tx['value'],
-            web3.keccak(hexstr=tx['data']),
-            tx['nonce'],
-            tx['executor'],
-            tx['gasLimit']
-        ]).hex()
-    txInputHash = web3.keccak(hexstr=txInput).hex()
-    txInputHashEIP712 = '0x19' + '01' + wallet.EIP712_DOMAIN_SEPARATOR().hex() + txInputHash[2:]
-    txHashEIP712 = web3.keccak(hexstr=txInputHashEIP712).hex()
-    return web3.eth.account.signHash(txHashEIP712, signer.private_key)

@@ -6,6 +6,10 @@ import "./FreedomWallet.sol";
 contract FreedomFactory {
 
   // Deploys a FreedomWallet contract returning its address matching that returned by getAddress()
+  // For a given owner address and salt, the deployed contract must have the same address regardless
+  // of which chain it is deployed on.  This is desireable to enable recovery of tokens accidentally
+  // transferred on the wrong chain.
+  //
   function deploy(address owner_, uint256 salt_)
     public
     payable

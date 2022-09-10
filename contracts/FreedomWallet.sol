@@ -23,6 +23,12 @@ contract FreedomWallet {
   address public immutable owner;
   uint256 public nonce;
 
+  // For a given owner address and salt, the deployed contract must have the same address
+  // regardless of which chain it is deployed on.  This is desireable to enable recovery
+  // of tokens accidentally transferred on the wrong chain.  Therefore the only argument
+  // allowed in the constructor is the owner address.  The deployment/instance salt,
+  // not to be confused with the EIP712 salt used here, is used by the EVM from Solidity's
+  // implementation of CREATE2 via the new FreedomWallet{salt:theSalt}(owner) syntax.
   constructor(address owner_)
   {
     require(owner_ != address(0));
@@ -51,5 +57,11 @@ contract FreedomWallet {
     bool success = false;
     assembly { success := call(gasLimit, destination, value, add(data, 0x20), mload(data), 0, 0) }
     require(success);
+  }
+
+  function transfer(address token, address destination, uint256 amount)
+    public
+  {
+    
   }
 }
