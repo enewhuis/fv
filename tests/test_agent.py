@@ -21,7 +21,7 @@ def test_agent_transfer(accounts, factory, token, FreedomWallet, agent, chain):
     # Transfer tokens to the FreedomWallet address 
     token.transfer(walletAddress, amount, {'from': sender})
 
-    # Owner sign a transaction that transfers 50 tokens to receiver
+    # Owner sign a transaction that transfers netAmount+fee tokens to receiver/operator
     tx = dict(destination = token.address,
               value = 0,
               data = token.transfer.encode_input(agent.address, amount),
