@@ -1,23 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
+// EIP712 Precomputed hashes:
+// keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)")
+bytes32 constant EIP712_DOMAINTYPE_HASH = 0xd87cd6ef79d4e2b95e15ce8abf732db51ec771f1ca2edccf22a46c729ac56472;
+
+// keccak256("FreedomWallet")
+bytes32 constant NAME_HASH = 0xc928069db9738122d42f41bf3d58cdeee8e5fdb61e64ec8b1d15ba776cb0d080;
+
+// keccak256("1")
+bytes32 constant VERSION_HASH = 0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6;
+
+// keccak256("SignedTransaction(address destination,uint256 value,bytes data,uint256 nonce,address executor,uint256 gasLimit)")
+bytes32 constant TXTYPE_HASH = 0xb2743a4bb0cb3cc82bc7804a803be38fdb3587e5fd092ef3d1ee3ea65bd5875f;
+
+bytes32 constant SALT = 0x9de06115391ae9892df837de56cee2a6e966cf778042d209176c84a9d6e0188f;
+
 contract FreedomWallet {
-
-  // EIP712 Precomputed hashes:
-  // keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)")
-  bytes32 public constant EIP712_DOMAINTYPE_HASH = 0xd87cd6ef79d4e2b95e15ce8abf732db51ec771f1ca2edccf22a46c729ac56472;
-
-  // keccak256("FreedomWallet")
-  bytes32 public constant NAME_HASH = 0xc928069db9738122d42f41bf3d58cdeee8e5fdb61e64ec8b1d15ba776cb0d080;
-
-  // keccak256("1")
-  bytes32 public constant VERSION_HASH = 0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6;
-
-  // keccak256("SignedTransaction(address destination,uint256 value,bytes data,uint256 nonce,address executor,uint256 gasLimit)")
-  bytes32 public constant TXTYPE_HASH = 0xb2743a4bb0cb3cc82bc7804a803be38fdb3587e5fd092ef3d1ee3ea65bd5875f;
-
-  bytes32 public constant SALT = 0x9de06115391ae9892df837de56cee2a6e966cf778042d209176c84a9d6e0188f;
-
   bytes32 public immutable EIP712_DOMAIN_SEPARATOR;
   
   address public immutable owner;

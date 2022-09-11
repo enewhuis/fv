@@ -32,7 +32,7 @@ def sign(wallet, signer, tx):
     txInput = web3.eth.codec.encode_abi(
         ['bytes32', 'address', 'uint256', 'bytes32', 'uint256', 'address', 'uint256'],
         [
-            wallet.TXTYPE_HASH(),
+            TXTYPE_HASH,
             tx['destination'],
             tx['value'],
             web3.keccak(hexstr=tx['data']),
