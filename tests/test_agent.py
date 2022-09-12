@@ -7,6 +7,8 @@ def test_agent_transfer(accounts, factory, token, FreedomWallet, agent, chain):
     receiver = accounts[1]
     operator = accounts[2]
 
+    agent.grantRole(agent.AGENT_ROLE(), operator, {'from': accounts[0]})
+
     amount = 100e18
     netAmount = 90e18 # 10e18 fee
     fee = amount - netAmount

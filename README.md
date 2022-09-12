@@ -8,14 +8,5 @@
 
 # Contract Addresses
 
-## Ethereum
-
-- FreedomFactory
-- FreedomAgent
-
-## Binance Smart Chain (bsc-main)
-
-- FreedomFactory 0xdF21472754795b0bc245F1287ff376bc9c342F81
-- FreedomAgent 0x37b7027908C8eB52b4Db907c8AFb7C86fC61D1Ad
-
-## Polygon
+- FreedomFactory 0x10843bC70f2F1aD601cE7Fb41BF838075A5b0CC7
+- FreedomAgent 0x1230B541221717b53CF5d0B4142927aDa571f134

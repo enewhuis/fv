@@ -41,11 +41,13 @@ def main():
 
     singletonFactory = Contract.from_abi('SingletonFactory', SINGLETON_FACTORY_ADDRESS, SINGLETON_FACTORY_ABI)
 
-    initCode = FreedomAgent.bytecode + '000000000000000000000000' + deterministicFactory[2:]
+    # hard-coded FJB Admin account 2nd constructor arg:
+    initCode = FreedomAgent.bytecode + '000000000000000000000000' + deterministicFactory[2:] + '00000000000000000000000076a17266Cc3c2d7531E988E43a15e4e0D7CAb3E2'
 
-    agentSalt = '0x0000000000000000000000000000000000000000000000000000000000000000'
+    agentSalt = '0x0000000000000000000000000000000000000000000000000000000000000004'
     deterministicAgent = predetermined_address(SINGLETON_FACTORY_ADDRESS, initCode, agentSalt)
-    assert deterministicAgent == '0x80c63Cfe8C8a4E977863891d64f40B08374B9E18'
+    print(deterministicAgent)
+    assert deterministicAgent == '0x1230B541221717b53CF5d0B4142927aDa571f134'
 
     deployer = accounts.load('fjb_admin')
     singletonFactory.deploy(initCode, agentSalt, { 'from': deployer, 'gas_limit': 1000000 })

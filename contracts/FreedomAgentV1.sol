@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./FreedomFactory.sol";
 import "./FreedomWallet.sol";
 
-contract FreedomAgent is AccessControl {
+contract FreedomAgentV1 is AccessControl {
   bytes32 public constant AGENT_ROLE = keccak256("AGENT_ROLE");
 
   FreedomFactory public immutable factory;
@@ -19,7 +19,7 @@ contract FreedomAgent is AccessControl {
     _setupRole(DEFAULT_ADMIN_ROLE, admin);
   }
 
-  function transfer(address owner, uint256 salt, address to, uint256 netAmount, uint8 sigV, bytes32 sigR, bytes32 sigS, address token, uint256 value, uint256 nonce, bytes memory data, uint gasLimit)
+  function transfer(address owner, uint256 salt, address payable to, uint256 netAmount, uint8 sigV, bytes32 sigR, bytes32 sigS, address token, uint256 value, uint256 nonce, bytes memory data, uint gasLimit)
     public
     onlyRole(AGENT_ROLE)
   {
@@ -37,10 +37,17 @@ contract FreedomAgent is AccessControl {
     // Check the signature and execute the transfer to this.
     wallet.execute(sigV, sigR, sigS, token, value, data, address(this), gasLimit);
 
-    // Transfer netAmount that should be less than transfer(to, amount) encoded in the data parameter.
-    require(IERC20(token).transfer(to, netAmount));
+    if (token == address(this)) {
+      require(data.length == 0);
+      to.transfer(netAmount);
+      payable(msg.sender).transfer(address(this).balance);
+    }
+    else {
+      // Transfer netAmount that should be less than transfer(to, amount) encoded in the data parameter.
+      require(IERC20(token).transfer(to, netAmount));
 
-    // Sender takes the rest as the fee.
-    require(IERC20(token).transfer(msg.sender, IERC20(token).balanceOf(address(this))));
+      // Sender takes the rest as the fee.
+      require(IERC20(token).transfer(msg.sender, IERC20(token).balanceOf(address(this))));
+    }
   }
 }
