@@ -1,7 +1,7 @@
 from brownie import web3, reverts
 from conftest import sign2
 
-def test_agent_transfer(accounts, factory, token, FreedomWallet, agent1, chain):
+def test_tether_transfer(accounts, factory, tether, FreedomWallet, agent1, chain):
     admin = accounts[0]
     sender = accounts[0]
     owner = accounts.add()
@@ -15,26 +15,26 @@ def test_agent_transfer(accounts, factory, token, FreedomWallet, agent1, chain):
     fee = amount - netAmount
 
     # Sender has some tokens
-    token.mint(sender, amount)
+    tether.transfer(sender, amount, {'from': admin})
 
     # Determine the FreedomWallet address from the owner address and the owner's instance id (salt)
     instance = 0
     walletAddress = factory.getAddress(owner, instance)
 
     # Transfer tokens to the FreedomWallet address 
-    token.transfer(walletAddress, amount, {'from': sender})
+    tether.transfer(walletAddress, amount, {'from': sender})
 
     # for later comparison since admin is also sender...
-    admin_balance = token.balanceOf(admin)
+    admin_balance = tether.balanceOf(admin)
 
     # Owner sign a transaction that transfers netAmount+fee tokens to receiver/operator
-    tx = dict(destination = token.address,
+    tx = dict(destination = tether.address,
               value = 0,
-              data = token.transfer.encode_input(agent1.address, amount),
+              data = tether.transfer.encode_input(agent1.address, amount),
               nonce = 0, # should be the first time used
               executor = agent1.address,
               gasLimit = 1000000)
-
+    print(amount, netAmount, tx)
     # FreedomWallet owner signs the transaction for the operator to execute.
     signed = sign2(factory, owner, instance, chain.id, tx)
 
@@ -53,7 +53,7 @@ def test_agent_transfer(accounts, factory, token, FreedomWallet, agent1, chain):
         {'from': operator, 'gasLimit': tx['gasLimit']})
 
     # Did the tokens arrive?
-    assert token.balanceOf(walletAddress) == 0
-    assert token.balanceOf(receiver) == netAmount
-    assert token.balanceOf(operator) == 0
-    assert token.balanceOf(admin) == admin_balance + fee
+    assert tether.balanceOf(walletAddress) == 0
+    assert tether.balanceOf(receiver) == netAmount
+    assert tether.balanceOf(operator) == 0
+    assert tether.balanceOf(admin) == admin_balance + fee

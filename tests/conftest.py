@@ -22,11 +22,19 @@ def factory(accounts, FreedomFactory):
 
 @pytest.fixture(scope="module")
 def agent(accounts, factory, FreedomAgent):
-    return FreedomAgent.deploy(factory, {"from": accounts[0]})
+    return FreedomAgent.deploy(factory, accounts[0], {"from": accounts[0]})
 
 @pytest.fixture(scope="module")
-def token(accounts, MockERC20):
-    return MockERC20.deploy("Mock Token", "MOCK", {"from": accounts[0]})
+def agent1(accounts, factory, FreedomAgentV1):
+    return FreedomAgentV1.deploy(factory, accounts[0], {"from": accounts[0]})
+
+@pytest.fixture(scope="module")
+def token(accounts, ConformantERC20):
+    return ConformantERC20.deploy("Mock Token", "MOCK", {"from": accounts[0]})
+
+@pytest.fixture(scope="module")
+def tether(accounts, TetherToken):
+    return TetherToken.deploy(1000000*10**6, "Tether USD", "USDT", 6, {"from": accounts[0]})
 
 def sign(wallet, signer, tx):
     txInput = web3.eth.codec.encode_abi(

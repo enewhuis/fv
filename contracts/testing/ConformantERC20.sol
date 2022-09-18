@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
  * @title Generic ERC20 burnable token
  * @notice Generic ERC20 token that is mintable and burnable for testing.
  */
-contract MockERC20 is ERC20Burnable {
+contract ConformantERC20 is ERC20Burnable {
     /**
      * @notice Deploy this contract with given name, symbol, and decimals
      * @dev the caller of this constructor will become the owner of this contract
